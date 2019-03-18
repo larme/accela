@@ -1,2 +1,3 @@
 # accela
- a sequencer for norns
+
+a sequencer for [norns](https://monome.org/norns/)
