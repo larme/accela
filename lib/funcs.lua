@@ -17,7 +17,7 @@ local Func = class('Func')
 
 function Func:initialize(arg)
   if #arg ~= 2 then
-    error("Func nit error: no name or arg_num!")
+    error("Func init error: no name or arg_num!")
   end
 
   self.name = arg[1]
