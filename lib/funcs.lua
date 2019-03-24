@@ -16,9 +16,8 @@ local max_func_id = 0
 local Func = class('Func')
 
 function Func:initialize(arg)
-  if #arg ~= 2 then
-    error("Func init error: no name or arg_num!")
-  end
+  assert(#arg == 2,
+	 "Func init error: no name or arg_num!")
 
   self.name = arg[1]
   self.arg_num = arg[2]
