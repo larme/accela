@@ -2,6 +2,20 @@ local class = require('middleclass')
 
 local _m = {}
 
+-- the conceptual layout of Mem: 
+
+-- Like a hierarchy structure, each level will have a name like
+-- "track", "step" etc. (which are stored in Mem.levels). Each level
+-- will have fixed number of nodes, called order of this level (which
+-- are stored in Mem.level_orders). Then nodes of the lowest level
+-- will have a fixed number of memory cells. The number is stored in
+-- Mem.unit_size
+--
+-- Because lua count from 1, nodes in a level will be numbered from 1
+-- to n where n is the order of the given level. We will also have a
+-- 0th node as a place to store meta data for this level. Hence the
+-- total number of the nodes in a level is n + 1.
+
 local Mem = class('Mem')
 
 function Mem:initialize(arg)
@@ -63,27 +77,42 @@ function Mem:__new_index(k, v)
   self._content[k] = v
 end
 
-function Mem:clear()
+function Mem:clear_all()
   if self.enable_undo then
     self._undo_content = self._content
   end
   self._content = {}
 end
 
+function Mem:clear(arg)
+  if not arg then
+    self:clear_all()
+    return
+  end
+
+  
+end
+
 function Mem:get_addr(arg)
   local idxs = {}
-  if #arg == #self.levels then
+  if #arg > 0 then
     for i = 1, #arg do
+      if i > self.level_num then
+	break
+      end
       idxs[i] = arg[i]
     end
   else
     for i, level_name in ipairs(self.levels) do
       idx = arg[level_name]
-      assert(idx, "Mem get_addr error: arguments not completed")
+      if not idx then
+	break
+      end
       idxs[i] = idx
     end
   end
 
+  -- TODO
   local level_orders_in_unit = {}
   local addr = 1
   for i, idx in ipairs(idxs) do
